@@ -1,12 +1,14 @@
 package desingpatternwork.demo;
 
+import org.springframework.stereotype.Component;
+
 import java.lang.reflect.Field;
 import java.util.Date;
 
+@Component
 public class SqlRepository<T> {
 
     public void insertPojo(T t) throws IllegalAccessException, NoSuchFieldException {
-        String c = "INSERT INTO TABLE_NAME VALUES (value1,value2,value3,...valueN);\n";
         Student student = new Student();
         student.setAge(12);
         student.setName("samet");
