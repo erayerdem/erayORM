@@ -10,7 +10,18 @@ import org.springframework.stereotype.Component;
 )
 @Component
 @Data
-public class Config {
+public class Config implements AutoCloseable{
 
     private  String name;
+
+    @Override
+    public void close() throws Exception {
+        System.out.println("kapattım");
+    }
+
+    public void persistexx(){
+
+        System.out.println("dsadasd");
+
+    }
 }
