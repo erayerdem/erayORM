@@ -1,24 +1,28 @@
 package desingpatternwork.demo;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.Date;
 
 @Component
-public class SqlRepository<T> {
+@AllArgsConstructor
+public class SqlRepository{
+        private  final  Config config;
+    public void persistInsertPojo() throws IllegalAccessException, NoSuchFieldException {
 
-    public void insertPojo(T t) throws IllegalAccessException, NoSuchFieldException {
         Student student = new Student();
         student.setAge(12);
         student.setName("samet");
         student.setSurname("eray erdem");
 
-        String trim = student.getClass().getName().toString().trim();
+        String trim = student.getClass().getName().trim();
 
 
-        String myquery = "INSERT INTO " + trim.substring(trim.lastIndexOf('.') + 1, trim.length()) + " (";
-        System.out.println(myquery);
+        String myquery = "INSERT INTO  "  + trim.substring(trim.lastIndexOf('.') + 1) + "  VALUES"+" (";
         Field[] declaredFields = student.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
 
@@ -42,15 +46,17 @@ public class SqlRepository<T> {
         myquery += ")";
         System.out.println(myquery);
 
-        Field field = student.getClass().getDeclaredField("name");
-
-        field.setAccessible(true);
-
-        Object value = field.get(student);
-        Class<?> type = field.getType();
+        try {
+            config.getStatement().executeUpdate(myquery);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+            catch (Exception e ){
+            e.printStackTrace();
+            }
     }
 
-    public void createTable() {
+    public void persistCreateTable() {
 
 
     }

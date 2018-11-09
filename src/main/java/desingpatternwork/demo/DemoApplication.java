@@ -11,20 +11,20 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @AllArgsConstructor
 @EnableAspectJAutoProxy
 public class DemoApplication {
-   private  final   Config config;
+    private final SqlRepository sqlRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(){
+    CommandLineRunner commandLineRunner() {
 
-        return  new CommandLineRunner() {
+        return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
+            sqlRepository.persistInsertPojo();
 
-                System.out.println(config.getName());
-                config.persistexx();
             }
         };
     }
