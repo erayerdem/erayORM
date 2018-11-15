@@ -6,7 +6,6 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;

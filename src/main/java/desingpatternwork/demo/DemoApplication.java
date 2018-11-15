@@ -23,7 +23,7 @@ public class DemoApplication {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
-            sqlRepository.persistInsertPojo();
+
 
             }
         };
