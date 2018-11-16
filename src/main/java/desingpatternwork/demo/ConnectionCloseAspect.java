@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.sql.DriverManager;
@@ -41,8 +42,9 @@ public class ConnectionCloseAspect {
     }
 
     @Before("execution(*  *.*.*.persist*(..))")
+    @Order(1)
     public void beConnection() {
-        System.out.println("bağlandı");
+
         try {
 
             Class.forName("com.mysql.jdbc.Driver");
@@ -55,5 +57,4 @@ public class ConnectionCloseAspect {
             e.printStackTrace();
         }
     }
-
-}
+    }
