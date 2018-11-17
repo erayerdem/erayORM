@@ -20,6 +20,6 @@ public class Config {
     private String password;
     private Connection connection;
     private Statement statement;
-
+    boolean checked =false;
 
 }

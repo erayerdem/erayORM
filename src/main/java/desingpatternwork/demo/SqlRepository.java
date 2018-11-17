@@ -1,11 +1,13 @@
 package desingpatternwork.demo;
 
+import desingpatternwork.demo.Annatations.PkAndName;
 import desingpatternwork.demo.Annatations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.Optional;
@@ -19,12 +21,23 @@ public class SqlRepository<T> {
     private final Config config;
 
 
-    public void persistSaveData(T clazz) {
+    public void persistSaveData(T clazz) throws SQLException, IllegalAccessException, NoSuchFieldException {
+
+        if (!config.checked) {
+            config.checked = true;
+            persistCreateTable(clazz);
+        }
+        PkAndName pkAndName = persistgetLastValue(clazz);
+        if (pkAndName != null) {
+            Class<Student> studentClass =Student.class;
+            Field age = studentClass.getField(pkAndName.getName());
+
+            age.set(clazz,pkAndName.getValue());
 
 
-        persistCheckTable(clazz);
+        }
+
         String tablename = findClassName(clazz);
-
         String myquery = "INSERT INTO  " + tablename + "  VALUES" + " (";
         Field[] declaredFields = clazz.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
@@ -42,6 +55,7 @@ public class SqlRepository<T> {
             Object o = null;
             try {
                 o = declaredField.get(clazz);
+
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -57,7 +71,6 @@ public class SqlRepository<T> {
 
         myquery = myquery.substring(0, myquery.length() - 1);
         myquery += ")";
-        System.out.println(myquery);
 
         try {
             config.getStatement().executeUpdate(myquery);
@@ -76,8 +89,14 @@ public class SqlRepository<T> {
 
     public void persistCreateTable(T clazz) {
         String className = findClassName(clazz);
-        String myprimarykey = findPrimaryKey(clazz);
-        System.out.println(myprimarykey + "benim primay key");
+        String myprimarykey = "pkyoktur";
+        boolean autoincrement = false;
+        Optional<PrimaryKey> primaryKey = findPrimaryKey(clazz);
+        if (primaryKey.isPresent()) {
+            myprimarykey = primaryKey.get().value();
+            autoincrement = primaryKey.get().increment();
+        }
+
         StringBuilder myquery = new StringBuilder("CREATE TABLE " + className + "(");
         Field[] declaredFields = clazz.getClass().getDeclaredFields();
         Stream.of(declaredFields)
@@ -100,8 +119,17 @@ public class SqlRepository<T> {
         else
             myquery.replace(myquery.lastIndexOf(","), myquery.capacity(), (");"));
         try {
-
+            System.out.println(myquery);
             config.getStatement().execute(myquery.toString());
+            if (autoincrement) {
+                String mysecond = "CREATE  TABLE  " + myprimarykey + "(" + myprimarykey + "   int )";
+                System.out.println(mysecond);
+                config.getStatement().execute(mysecond);
+                String sonquery = "insert  into " + myprimarykey + "   values" + "(0);";
+
+                config.getStatement().executeUpdate(sonquery);
+
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
@@ -111,49 +139,42 @@ public class SqlRepository<T> {
 
     }
 
-    private void persistCheckTable(T clazz) {
-        int i = 0;
-        String tablename = findClassName(clazz);
-        try {
 
-            if (config.getDatabasemodel().equals("mysql")) {
-                i = config.getStatement().executeUpdate("SHOW TABLES like '%" + tablename + "%'");
-                System.out.println("durum" + i);
-            } else if ("postgresql".equals(config.getDatabasemodel())){
-                try {
-
-                    config.getStatement().executeQuery("select * from" + tablename);
-                } catch (Exception e) {
-                    i = 0;
-
-                }
-
-            }
-
-            log.info("table check edildi");
-            if (i == 0) {
-
-                persistCreateTable(clazz);
-            }
-
-            System.out.println(i);
-        } catch (NullPointerException e) {
-
-
-        } catch (SQLException e) {
-            log.error(e.toString());
-        } catch (Exception e) {
-            log.error(e.toString());
-        }
-
-    }
-
-    public String findPrimaryKey(T clazz) {
+    public Optional<PrimaryKey> findPrimaryKey(T clazz) {
         Class<?> aClass = clazz.getClass();
         PrimaryKey[] annotationsByType = aClass.getAnnotationsByType(PrimaryKey.class);
         Optional<PrimaryKey> primaryKey = Optional.ofNullable(annotationsByType[0]);
-        if (primaryKey.isPresent())
-            return primaryKey.get().value();
-        return "pkyoktur";
+        return primaryKey;
+    }
+
+    public PkAndName persistgetLastValue(T clazz) throws SQLException {
+        PkAndName pkAndName = new PkAndName();
+
+        boolean increment = false;
+        String tablename = "yok";
+        int sonvalue = -1;
+        Optional<PrimaryKey> primaryKey = findPrimaryKey(clazz);
+        if (primaryKey.isPresent()) {
+            increment = primaryKey.get().increment();
+            tablename = primaryKey.get().value();
+            pkAndName.setName(tablename);
+
+        }
+        if (increment) {
+            String queryasd = "select  " + tablename + "  from " + tablename;
+            System.out.println(queryasd);
+            ResultSet resultSet = config.getStatement().executeQuery(queryasd);
+
+            while (resultSet.next()) {
+                sonvalue = resultSet.getInt(tablename);
+            }
+            pkAndName.setValue(sonvalue);
+            String query = "update  " + tablename + "   set  " + tablename + "=" + (sonvalue+1 )+ " where " + tablename + " =" + sonvalue;
+            System.out.println(query);
+            config.getStatement().execute(query);
+            return pkAndName;
+        }
+        //config.getStatement().executeUpdate(sonquery);r
+        return null;
     }
 }

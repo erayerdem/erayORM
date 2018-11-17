@@ -6,16 +6,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
+
 @RestController
 @RequestMapping("students")
 @AllArgsConstructor
 public class StudentController {
 
     private final SqlRepository<Student> sqlRepository;
-    private final SqlRepository<MyPojo> myPojoSqlRepository;
+
 
     @PostMapping
-    public void responseEntity(@RequestBody Student student) {
+    public void responseEntity(@RequestBody Student student) throws SQLException, NoSuchFieldException, IllegalAccessException {
 
         sqlRepository.persistSaveData(student);
 

@@ -20,7 +20,7 @@ public class ConnectionCloseAspect {
 
     @After("execution(* *.*.*.persist*(..))")
     public void closeConnection() {
-        System.out.println("bağlantı koptu");
+
         if (config.getStatement() != null) {
             try {
                 config.getStatement().close();
