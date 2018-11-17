@@ -11,5 +11,6 @@ import java.lang.annotation.Target;
 public @interface PrimaryKey {
 
     String value();
+    boolean increment() default  false;
 
 }

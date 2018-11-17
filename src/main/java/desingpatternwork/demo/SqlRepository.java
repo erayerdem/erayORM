@@ -91,14 +91,14 @@ public class SqlRepository<T> {
                         String substring;
                         substring = declaring.getType().toString().trim().substring(start);
 
-                     if ("String".equals(substring))
+                        if ("String".equals(substring))
                             myquery.append("varchar(255),");
                     }
                 });
         if (!myprimarykey.equals("pkyoktur"))
-            myquery.append("PRIMARY KEY ("+myprimarykey+"))");
+            myquery.append("PRIMARY KEY (" + myprimarykey + "))");
         else
-        myquery.replace(myquery.lastIndexOf(","), myquery.capacity(), (");"));
+            myquery.replace(myquery.lastIndexOf(","), myquery.capacity(), (");"));
         try {
 
             config.getStatement().execute(myquery.toString());
@@ -112,14 +112,27 @@ public class SqlRepository<T> {
     }
 
     private void persistCheckTable(T clazz) {
-
+        int i = 0;
         String tablename = findClassName(clazz);
-
         try {
-            System.out.println(tablename);
-            int i = config.getStatement().executeUpdate("SHOW TABLES LIKE '%" + tablename + "%'");
+
+            if (config.getDatabasemodel().equals("mysql")) {
+                i = config.getStatement().executeUpdate("SHOW TABLES like '%" + tablename + "%'");
+                System.out.println("durum" + i);
+            } else if ("postgresql".equals(config.getDatabasemodel())){
+                try {
+
+                    config.getStatement().executeQuery("select * from" + tablename);
+                } catch (Exception e) {
+                    i = 0;
+
+                }
+
+            }
+
             log.info("table check edildi");
             if (i == 0) {
+
                 persistCreateTable(clazz);
             }
 

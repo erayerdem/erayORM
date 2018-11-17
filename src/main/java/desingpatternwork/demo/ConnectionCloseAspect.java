@@ -42,19 +42,27 @@ public class ConnectionCloseAspect {
     }
 
     @Before("execution(*  *.*.*.persist*(..))")
-    @Order(1)
+
     public void beConnection() {
 
         try {
+            if ("mysql".equals(config.getDatabasemodel())) {
+                Class.forName("com.mysql.jdbc.Driver");
+                config.setConnection(DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword()));
+                config.setStatement(config.getConnection().createStatement());
+            } else if ("postgresql".equals(config.getDatabasemodel())) {
+                Class.forName("org.postgresql.Driver");
+                config.setConnection(DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword()));
+                config.setStatement(config.getConnection().createStatement());
+                ;
 
-            Class.forName("com.mysql.jdbc.Driver");
-            config.setConnection(DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword()));
-            config.setStatement(config.getConnection().createStatement());
+            }
 
         } catch (SQLException e) {
+            System.out.println("bağlantı sorunlu");
             e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("bağlantı sorunlu");
         }
     }
-    }
+}
