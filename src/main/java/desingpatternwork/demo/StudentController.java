@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudentController {
 
     private final SqlRepository<Student> sqlRepository;
+    private final SqlRepository<MyPojo> myPojoSqlRepository;
 
     @PostMapping
     public void responseEntity(@RequestBody Student student) {
 
-        sqlRepository.persistInjectInsertPojo(student);
+        sqlRepository.persistSaveData(student);
 
 
     }
+
 
 
 }

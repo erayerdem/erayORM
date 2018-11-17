@@ -1,5 +1,6 @@
 package desingpatternwork.demo;
 
+import desingpatternwork.demo.Annatations.PrimaryKey;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -7,17 +8,18 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
 @AllArgsConstructor
 @Slf4j
 public class SqlRepository<T> {
+
     private final Config config;
 
 
-
-    public void persistInjectInsertPojo(T clazz) {
+    public void persistSaveData(T clazz) {
 
 
         persistCheckTable(clazz);
@@ -74,45 +76,49 @@ public class SqlRepository<T> {
 
     public void persistCreateTable(T clazz) {
         String className = findClassName(clazz);
-
-        StringBuilder myquery=new StringBuilder("CREATE TABLE "+className+"(");
+        String myprimarykey = findPrimaryKey(clazz);
+        System.out.println(myprimarykey + "benim primay key");
+        StringBuilder myquery = new StringBuilder("CREATE TABLE " + className + "(");
         Field[] declaredFields = clazz.getClass().getDeclaredFields();
         Stream.of(declaredFields)
                 .forEach(declaring -> {
-                    myquery.append(declaring.getName()+" ");
-                    if(!(declaring.getType().toString()).contains(".")){
-                        myquery.append(declaring.getType()+", ");
-                    }
-                else {  int start=declaring.getType().toString().trim().lastIndexOf(".")+1;
-                        String substring ;
-                     substring=   declaring.getType().toString().trim().substring(start);
-                        System.out.println("substring"+substring);
-                        if(substring.equals("String"))
+                    myquery.append(declaring.getName() + " ");
+                    if (!(declaring.getType().toString()).contains(".")) {
+                        myquery.append(declaring.getType() + ", ");
+
+                    } else {
+                        int start = declaring.getType().toString().trim().lastIndexOf(".") + 1;
+                        String substring;
+                        substring = declaring.getType().toString().trim().substring(start);
+
+                     if ("String".equals(substring))
                             myquery.append("varchar(255),");
                     }
                 });
-        myquery.replace(myquery.lastIndexOf(","),myquery.capacity(),(");"));
+        if (!myprimarykey.equals("pkyoktur"))
+            myquery.append("PRIMARY KEY ("+myprimarykey+"))");
+        else
+        myquery.replace(myquery.lastIndexOf(","), myquery.capacity(), (");"));
         try {
-            System.out.println("burasi calisiyor");
+
             config.getStatement().execute(myquery.toString());
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             log.error(e.toString());
         }
-        log.info("table created"+myquery);
+        log.info("table created" + myquery);
 
     }
 
     private void persistCheckTable(T clazz) {
 
         String tablename = findClassName(clazz);
-        log.info("table check edildi");
+
         try {
             System.out.println(tablename);
             int i = config.getStatement().executeUpdate("SHOW TABLES LIKE '%" + tablename + "%'");
-            System.out.println(i);
+            log.info("table check edildi");
             if (i == 0) {
                 persistCreateTable(clazz);
             }
@@ -127,5 +133,14 @@ public class SqlRepository<T> {
             log.error(e.toString());
         }
 
+    }
+
+    public String findPrimaryKey(T clazz) {
+        Class<?> aClass = clazz.getClass();
+        PrimaryKey[] annotationsByType = aClass.getAnnotationsByType(PrimaryKey.class);
+        Optional<PrimaryKey> primaryKey = Optional.ofNullable(annotationsByType[0]);
+        if (primaryKey.isPresent())
+            return primaryKey.get().value();
+        return "pkyoktur";
     }
 }
