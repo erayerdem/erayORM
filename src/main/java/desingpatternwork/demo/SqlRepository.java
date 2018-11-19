@@ -2,23 +2,34 @@ package desingpatternwork.demo;
 
 import desingpatternwork.demo.Annatations.PkAndName;
 import desingpatternwork.demo.Annatations.PrimaryKey;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
-@AllArgsConstructor
 @Slf4j
 public class SqlRepository<T> {
+    @Autowired
+    private Config config;
+    T t;
+    SqlRepository() {
 
-    private final Config config;
+
+    }
+
+    SqlRepository(Class aClass) throws IllegalAccessException, InstantiationException {
+        t= (T) aClass.newInstance();
+
+    }
 
 
     public void persistSaveData(T clazz) throws SQLException, IllegalAccessException, NoSuchFieldException {
@@ -29,10 +40,10 @@ public class SqlRepository<T> {
         }
         PkAndName pkAndName = persistgetLastValue(clazz);
         if (pkAndName != null) {
-            Class<Student> studentClass =Student.class;
+            Class<Student> studentClass = Student.class;
             Field age = studentClass.getField(pkAndName.getName());
 
-            age.set(clazz,pkAndName.getValue());
+            age.set(clazz, pkAndName.getValue());
 
 
         }
@@ -169,7 +180,7 @@ public class SqlRepository<T> {
                 sonvalue = resultSet.getInt(tablename);
             }
             pkAndName.setValue(sonvalue);
-            String query = "update  " + tablename + "   set  " + tablename + "=" + (sonvalue+1 )+ " where " + tablename + " =" + sonvalue;
+            String query = "update  " + tablename + "   set  " + tablename + "=" + (sonvalue + 1) + " where " + tablename + " =" + sonvalue;
             System.out.println(query);
             config.getStatement().execute(query);
             return pkAndName;
@@ -177,4 +188,22 @@ public class SqlRepository<T> {
         //config.getStatement().executeUpdate(sonquery);r
         return null;
     }
+
+    public ResponseEntity<List<T>> persistGetByPrimaryKey() {
+
+
+        try {
+            ResultSet resultSet = config.getStatement().executeQuery("select * from   ");
+            while (resultSet.next()) {
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+
 }

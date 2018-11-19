@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.sql.DriverManager;
@@ -42,7 +41,6 @@ public class ConnectionCloseAspect {
     }
 
     @Before("execution(*  *.*.*.persist*(..))")
-
     public void beConnection() {
 
         try {
@@ -54,7 +52,6 @@ public class ConnectionCloseAspect {
                 Class.forName("org.postgresql.Driver");
                 config.setConnection(DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword()));
                 config.setStatement(config.getConnection().createStatement());
-                ;
 
             }
 
