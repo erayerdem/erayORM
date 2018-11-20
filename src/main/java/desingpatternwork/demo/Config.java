@@ -14,12 +14,12 @@ import java.sql.Statement;
 @Component
 @Data
 public class Config {
-    private  String databasemodel;
+    boolean checked = false;
+    private String databasemodel;
     private String url;
     private String username;
     private String password;
     private Connection connection;
     private Statement statement;
-    boolean checked =false;
 
 }

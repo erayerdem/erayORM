@@ -11,21 +11,21 @@ import java.sql.SQLException;
 @AllArgsConstructor
 public class StudentController {
 
-    private final SqlRepository<Student> sqlRepository;
+    private final SqlRepositoryIMPL<Student> sqlRepositoryIMPL;
 
 
     @PostMapping
     public void responseEntity(@RequestBody Student student) throws SQLException, NoSuchFieldException, IllegalAccessException {
 
-        sqlRepository.persistSaveData(student);
+        sqlRepositoryIMPL.persistSaveData(student);
 
 
     }
 
     @GetMapping
-    public ResponseEntity<Student> getAllStudents(){
+    public ResponseEntity<Student> getAllStudents() {
 
-    return  new ResponseEntity<Student>(null);
+        return new ResponseEntity<Student>(null);
 
     }
 
