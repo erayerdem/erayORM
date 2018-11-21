@@ -5,12 +5,13 @@ import desingpatternwork.demo.Annatations.PrimaryKey;
 import lombok.Data;
 
 @Data
-@PrimaryKey(value = "age", increment = true)
+@PrimaryKey(value = "id", increment = true)
 public class Student<T> {
-
-    public int age;
+    public  int id;
+    private int age;
     private String name;
     private String surname;
+
 
 
 }

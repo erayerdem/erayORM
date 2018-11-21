@@ -1,19 +1,24 @@
 package desingpatternwork.demo;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class Test<E> {
 
-    Test(Class clazz) throws IllegalAccessException, InstantiationException {
 
-        Object o = clazz.newInstance();
+    public static void main(String[] args) {
+        Student student = new Student();
+        Field[] declaredFields = student.getClass().getDeclaredFields();
+        Stream.of(declaredFields).forEach(field -> System.out.println(field.getType()));
+
 
     }
 
+    public String getlist() {
 
-    public static void main(String[] args) throws NoSuchFieldException, InstantiationException, IllegalAccessException {
-        Test test = new Test(ArrayList.class);
-         new ArrayList<>();
+        return "12";
 
     }
 }
