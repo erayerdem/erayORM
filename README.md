@@ -1,3 +1,3 @@
 # HIBERSAM
 
-#### Spring Boot ve Reflection kullanarak ORM Aracı  ve CRUD YAPABİLMEK İÇİN REST API
+#### Spring Boot ve Reflection kullanarak ORM aracı  ve CRUD yapabilmek için REST API
