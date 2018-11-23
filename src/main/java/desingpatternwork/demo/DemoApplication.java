@@ -11,7 +11,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @AllArgsConstructor
 @EnableAspectJAutoProxy
 public class DemoApplication {
-    private final SqlRepositoryIMPL sqlRepository;
+    private final SqlRepositoryImpl sqlRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);

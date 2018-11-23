@@ -23,6 +23,8 @@ public class ConnectionCloseAspect {
         if (config.getStatement() != null) {
             try {
                 config.getStatement().close();
+                config.getConnection().close();
+
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (Exception e) {

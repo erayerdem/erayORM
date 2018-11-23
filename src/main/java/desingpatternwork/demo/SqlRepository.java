@@ -1,5 +1,6 @@
 package desingpatternwork.demo;
 
+import desingpatternwork.demo.Annatations.KeyValue;
 import desingpatternwork.demo.Annatations.PkAndName;
 import desingpatternwork.demo.Annatations.PrimaryKey;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +22,19 @@ public interface SqlRepository<T> {
 
     PkAndName persistgetLastValue(T clazz) throws SQLException;
 
-    ResponseEntity<List<T>> persistGetByPrimaryKey();
+
 
     List<T> persistFindAll() throws SQLException, NoSuchFieldException, IllegalAccessException, InstantiationException;
 
     List<String> getFieldNameList(T t);
 
-    void persistRemove(int id);
+    List<T>  persistFindAllByQuery(KeyValue keyValue) throws IllegalAccessException, SQLException, InstantiationException, NoSuchFieldException;
 
     <T> T persistGetEntity(Long id) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException;
 
-
+     List<T> persistRunQuery(String query) throws SQLException, IllegalAccessException, InstantiationException, NoSuchFieldException;
     void persistDeleteEntity(Long id) throws SQLException;
 
-    void persistUpdateEntity(T T);
+    void persistUpdateEntity(T T) throws NoSuchFieldException, IllegalAccessException, SQLException, InstantiationException;
 }
 
