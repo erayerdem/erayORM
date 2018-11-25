@@ -12,6 +12,8 @@ public class University {
     private String city;
     private String country;
     private  String departmentName;
+    private  int schoolnumber;
+
 
 
 }

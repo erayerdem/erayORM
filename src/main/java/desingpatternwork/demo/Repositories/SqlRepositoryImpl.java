@@ -1,10 +1,12 @@
-package desingpatternwork.demo;
+package desingpatternwork.demo.Repositories;
 
 import desingpatternwork.demo.Annatations.KeyValue;
 import desingpatternwork.demo.Annatations.PkAndName;
 import desingpatternwork.demo.Annatations.PrimaryKey;
+import desingpatternwork.demo.configuration.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -16,9 +18,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Component
+
 @Slf4j
+@Component
+@Scope("prototype")
 public class SqlRepositoryImpl<T> implements SqlRepository<T> {
+    List<String> tables=new ArrayList<>();
 
     T cachedata;
     @Autowired
@@ -30,10 +35,13 @@ public class SqlRepositoryImpl<T> implements SqlRepository<T> {
     }
 
     public void persistSave(T clazz) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException {
+
+
         PkAndName pkAndName = null;
         cachedata = (T) clazz.getClass().newInstance();
-        if (!config.checked) {
-            config.checked = true;
+
+        if (isTableCreated(findClassName(clazz))) {
+
             persistCreateTable(clazz);
         }
         Optional<PrimaryKey> primaryKey = findPrimaryKey(clazz);
@@ -108,7 +116,7 @@ public class SqlRepositoryImpl<T> implements SqlRepository<T> {
 
     }
 
-    public void persistCreateTable(T clazz) {
+    public void persistCreateTable(T clazz) throws SQLException {
         String className = findClassName(clazz);
         String myprimarykey = "pkyoktur";
         boolean autoincrement = false;
@@ -139,8 +147,9 @@ public class SqlRepositoryImpl<T> implements SqlRepository<T> {
             myquery.append("PRIMARY KEY (" + myprimarykey + "))");
         else
             myquery.replace(myquery.lastIndexOf(","), myquery.capacity(), (");"));
-        try {
+
             System.out.println(myquery);
+        System.out.println(config+"config");
             config.getStatement().execute(myquery.toString());
             if (autoincrement) {
                 String mysecond = "CREATE  TABLE  " + myprimarykey + "(" + myprimarykey + "   int )";
@@ -150,11 +159,7 @@ public class SqlRepositoryImpl<T> implements SqlRepository<T> {
 
                 config.getStatement().executeUpdate(sonquery);
 
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            log.error(e.toString());
+
         }
         log.info("table created" + myquery);
 
@@ -327,5 +332,19 @@ public class SqlRepositoryImpl<T> implements SqlRepository<T> {
         persistSave(entity);
     }
 
+    @Override
+    public boolean isTableCreated(String name) {
+        for (String a:tables){
+            if(name.equals(a))
+                return  false;
 
+        }
+      tables.add(name);
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

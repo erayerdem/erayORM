@@ -1,4 +1,4 @@
-package desingpatternwork.demo;
+package desingpatternwork.demo.Repositories;
 
 import desingpatternwork.demo.Annatations.KeyValue;
 import desingpatternwork.demo.Annatations.PkAndName;
@@ -10,13 +10,13 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+
 public interface SqlRepository<T> {
     void persistSave(T t) throws SQLException, IllegalAccessException, NoSuchFieldException, InstantiationException;
 
     String findClassName(T t);
 
-    void persistCreateTable(T t);
+    void persistCreateTable(T t) throws SQLException;
 
     Optional<PrimaryKey> findPrimaryKey(T t);
 
@@ -36,5 +36,8 @@ public interface SqlRepository<T> {
     void persistDeleteEntity(Long id) throws SQLException;
 
     void persistUpdateEntity(T T) throws NoSuchFieldException, IllegalAccessException, SQLException, InstantiationException;
+
+    boolean isTableCreated(String name);
+
 }
 

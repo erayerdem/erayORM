@@ -8,10 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @SpringBootApplication
-@AllArgsConstructor
 @EnableAspectJAutoProxy
 public class DemoApplication {
-    private final SqlRepositoryImpl sqlRepository;
+
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);

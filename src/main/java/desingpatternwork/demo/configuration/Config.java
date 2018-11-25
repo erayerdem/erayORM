@@ -1,4 +1,4 @@
-package desingpatternwork.demo;
+package desingpatternwork.demo.configuration;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

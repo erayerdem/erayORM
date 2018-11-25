@@ -1,19 +1,19 @@
-package desingpatternwork.demo;
+package desingpatternwork.demo.Controller;
 
 import desingpatternwork.demo.Annatations.KeyValue;
+import desingpatternwork.demo.Repositories.SqlRepository;
 import desingpatternwork.demo.entities.Student;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("students")
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
 public class StudentController {
 
     private final SqlRepository<Student> studentSqlRepository;

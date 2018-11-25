@@ -4,16 +4,15 @@ import desingpatternwork.demo.Annatations.PrimaryKey;
 import lombok.Data;
 
 @Data
-@PrimaryKey(value = "idCardid",increment = true)
+@PrimaryKey(value = "idcarddef", increment = true)
 public class IdCard {
 
-    public  int idCardId;
-    private  int İdNumber;
-    private  String birthplace;
-    private String birthdate;
-    private  String mumname;
-    private  String fathername;
-
+    public int idcarddef;
+    private int idNumber;
+    private String birthPlace;
+    private String birthDate;
+    private String motherName;
+    private String fatherName;
 
 
 }

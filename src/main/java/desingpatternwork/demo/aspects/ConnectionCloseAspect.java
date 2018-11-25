@@ -1,6 +1,7 @@
-package desingpatternwork.demo;
+package desingpatternwork.demo.aspects;
 
 
+import desingpatternwork.demo.configuration.Config;
 import lombok.AllArgsConstructor;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -17,7 +18,7 @@ public class ConnectionCloseAspect {
 
     private final Config config;
 
-    @After("execution(* *.*.*.persist*(..))")
+    @After("execution(* *.*.*.*.persist*(..))")
     public void closeConnection() {
 
         if (config.getStatement() != null) {
@@ -33,6 +34,7 @@ public class ConnectionCloseAspect {
         }
         if (config.getConnection() != null) {
             try {
+                System.out.println(config+"occonfig");
                 config.getConnection().close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -42,8 +44,9 @@ public class ConnectionCloseAspect {
         }
     }
 
-    @Before("execution(*  *.*.*.persist*(..))")
+    @Before("execution(*  *.*.*.*.persist*(..))")
     public void beConnection() {
+        System.out.println("my aspect is working");
 
         try {
             if ("mysql".equals(config.getDatabasemodel())) {
